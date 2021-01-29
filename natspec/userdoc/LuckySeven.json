@@ -1,0 +1,9 @@
+{
+  "kind": "user",
+  "methods": {
+    "generator(uint256,uint256,uint256,uint256,uint256,uint256)": {
+      "notice": "Generates a pseudo random number on chain with super low gas cost (850 gas)"
+    }
+  },
+  "version": 1
+}

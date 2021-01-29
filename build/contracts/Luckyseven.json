@@ -1,0 +1,1576 @@
+{
+  "contractName": "LuckySeven",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "b",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "n",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "mu",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "p",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "i",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "j",
+          "type": "uint256"
+        }
+      ],
+      "name": "generator",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "O",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"b\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"n\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"mu\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"p\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"i\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"j\",\"type\":\"uint256\"}],\"name\":\"generator\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"O\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"LuckySeven is a contract to generate random number with low cost\",\"kind\":\"dev\",\"methods\":{\"generator(uint256,uint256,uint256,uint256,uint256,uint256)\":{\"details\":\"Generates a pseudo random number on chain with super low gas cost (850 gas)\",\"params\":{\"b\":\"1. numerator of the PRNG\",\"i\":\"5. chooses the starting position to start cutting the number\",\"j\":\"6. to choose the length of the random number (digits from i position to left)\",\"mu\":\"3. value for the oscilator to introduce entropy\",\"n\":\"2. power of the 10 on the divisor of the PRNG\",\"p\":\"4. expands the number as 10^p\"}}},\"title\":\"LuckySeven\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"generator(uint256,uint256,uint256,uint256,uint256,uint256)\":{\"notice\":\"Generates a pseudo random number on chain with super low gas cost (850 gas)\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/Users/matiasbn/Desktop/luckyseven-protocol-contracts/contracts/LuckySeven.sol\":\"LuckySeven\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":100},\"remappings\":[]},\"sources\":{\"/Users/matiasbn/Desktop/luckyseven-protocol-contracts/contracts/LuckySeven.sol\":{\"keccak256\":\"0x40d3fb67d1d6fb54f11ee2e732c3401d80052d33cdbbad95c2e60d937d47e473\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://e60dc33b25312e87914f0384fe00692c51c89bb9cc077c6e886ebcd7cbd20af5\",\"dweb:/ipfs/QmXhm5dSWmBpWREMETke9FxyYPvgDpiVDnv8tXSmsJNcDU\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5060d88061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80636f7ce92e14602d575b600080fd5b6065600480360360c0811015604157600080fd5b5080359060208101359060408101359060608101359060808101359060a001356077565b60408051918252519081900360200190f35b600a82810a95810a9490940392840a95909502919091048381069490910190910a900691909103049056fea2646970667358221220b995c572a14097aa96528aa34574cc24520231b43a3eff9a5bc478dba90b505664736f6c634300060c0033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060285760003560e01c80636f7ce92e14602d575b600080fd5b6065600480360360c0811015604157600080fd5b5080359060208101359060408101359060608101359060808101359060a001356077565b60408051918252519081900360200190f35b600a82810a95810a9490940392840a95909502919091048381069490910190910a900691909103049056fea2646970667358221220b995c572a14097aa96528aa34574cc24520231b43a3eff9a5bc478dba90b505664736f6c634300060c0033",
+  "immutableReferences": {},
+  "sourceMap": "165:1313:0:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "165:1313:0:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;772:704;;;;;;;;;;;;;;;;-1:-1:-1;772:704:0;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;990:2;1263:10;;;1069;;;1109;;;;986;;;1026:9;;;;1154;;;;1350;;;1219;;;;1211:18;;;1303:9;;1393;;;;1451;;963:507::o",
+  "source": "//SPDX-License-Identifier: UNLICENSED\npragma solidity ^0.6.0;\n\n/**\n * @title LuckySeven\n * @dev LuckySeven is a contract to generate random number with low cost\n */\ncontract LuckySeven {\n    /**\n     * @notice Generates a pseudo random number on chain with super low gas cost (850 gas)\n     * @dev Generates a pseudo random number on chain with super low gas cost (850 gas)\n     * @param b 1. numerator of the PRNG\n     * @param n 2. power of the 10 on the divisor of the PRNG\n     * @param mu 3. value for the oscilator to introduce entropy\n     * @param p 4. expands the number as 10^p\n     * @param i 5. chooses the starting position to start cutting the number\n     * @param j 6. to choose the length of the random number (digits from i position to left)\n     */\n\n    function generator(\n        uint256 b,\n        uint256 n,\n        uint256 mu,\n        uint256 p,\n        uint256 i,\n        uint256 j\n    ) public pure returns (uint256 O) {\n        assembly {\n            let L := exp(10, p) // 10^p\n            let U := mul(L, b) // 10^p * b\n            let C := exp(10, n) // 10^n\n            let K := sub(C, mu) // 10^n - mu\n            let Y := div(U, K) // (10^p * b)/(10^n - mu)\n            let S := exp(10, add(i, j)) // 10^(i+j)\n            let E := exp(10, i) // 10^i\n            let V := mod(Y, S) // Y % 10^(i+j)\n            let N := mod(Y, E) // Y % 10^i\n            let I := sub(V, N) // (Y % 10^(i+j)) / (Y % 10^i)\n            O := div(I, E)\n        }\n    }\n}\n",
+  "sourcePath": "/Users/matiasbn/Desktop/luckyseven-protocol-contracts/contracts/LuckySeven.sol",
+  "ast": {
+    "absolutePath": "/Users/matiasbn/Desktop/luckyseven-protocol-contracts/contracts/LuckySeven.sol",
+    "exportedSymbols": {
+      "LuckySeven": [
+        23
+      ]
+    },
+    "id": 24,
+    "license": "UNLICENSED",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1,
+        "literals": [
+          "solidity",
+          "^",
+          "0.6",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "38:23:0"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": {
+          "id": 2,
+          "nodeType": "StructuredDocumentation",
+          "src": "63:101:0",
+          "text": " @title LuckySeven\n @dev LuckySeven is a contract to generate random number with low cost"
+        },
+        "fullyImplemented": true,
+        "id": 23,
+        "linearizedBaseContracts": [
+          23
+        ],
+        "name": "LuckySeven",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 21,
+              "nodeType": "Block",
+              "src": "944:532:0",
+              "statements": [
+                {
+                  "AST": {
+                    "nodeType": "YulBlock",
+                    "src": "963:507:0",
+                    "statements": [
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "977:19:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "kind": "number",
+                              "nodeType": "YulLiteral",
+                              "src": "990:2:0",
+                              "type": "",
+                              "value": "10"
+                            },
+                            {
+                              "name": "p",
+                              "nodeType": "YulIdentifier",
+                              "src": "994:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "exp",
+                            "nodeType": "YulIdentifier",
+                            "src": "986:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "986:10:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "L",
+                            "nodeType": "YulTypedName",
+                            "src": "981:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1017:18:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "L",
+                              "nodeType": "YulIdentifier",
+                              "src": "1030:1:0"
+                            },
+                            {
+                              "name": "b",
+                              "nodeType": "YulIdentifier",
+                              "src": "1033:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "mul",
+                            "nodeType": "YulIdentifier",
+                            "src": "1026:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1026:9:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "U",
+                            "nodeType": "YulTypedName",
+                            "src": "1021:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1060:19:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "kind": "number",
+                              "nodeType": "YulLiteral",
+                              "src": "1073:2:0",
+                              "type": "",
+                              "value": "10"
+                            },
+                            {
+                              "name": "n",
+                              "nodeType": "YulIdentifier",
+                              "src": "1077:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "exp",
+                            "nodeType": "YulIdentifier",
+                            "src": "1069:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1069:10:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "C",
+                            "nodeType": "YulTypedName",
+                            "src": "1064:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1100:19:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "C",
+                              "nodeType": "YulIdentifier",
+                              "src": "1113:1:0"
+                            },
+                            {
+                              "name": "mu",
+                              "nodeType": "YulIdentifier",
+                              "src": "1116:2:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "sub",
+                            "nodeType": "YulIdentifier",
+                            "src": "1109:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1109:10:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "K",
+                            "nodeType": "YulTypedName",
+                            "src": "1104:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1145:18:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "U",
+                              "nodeType": "YulIdentifier",
+                              "src": "1158:1:0"
+                            },
+                            {
+                              "name": "K",
+                              "nodeType": "YulIdentifier",
+                              "src": "1161:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "div",
+                            "nodeType": "YulIdentifier",
+                            "src": "1154:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1154:9:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "Y",
+                            "nodeType": "YulTypedName",
+                            "src": "1149:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1202:27:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "kind": "number",
+                              "nodeType": "YulLiteral",
+                              "src": "1215:2:0",
+                              "type": "",
+                              "value": "10"
+                            },
+                            {
+                              "arguments": [
+                                {
+                                  "name": "i",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "1223:1:0"
+                                },
+                                {
+                                  "name": "j",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "1226:1:0"
+                                }
+                              ],
+                              "functionName": {
+                                "name": "add",
+                                "nodeType": "YulIdentifier",
+                                "src": "1219:3:0"
+                              },
+                              "nodeType": "YulFunctionCall",
+                              "src": "1219:9:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "exp",
+                            "nodeType": "YulIdentifier",
+                            "src": "1211:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1211:18:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "S",
+                            "nodeType": "YulTypedName",
+                            "src": "1206:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1254:19:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "kind": "number",
+                              "nodeType": "YulLiteral",
+                              "src": "1267:2:0",
+                              "type": "",
+                              "value": "10"
+                            },
+                            {
+                              "name": "i",
+                              "nodeType": "YulIdentifier",
+                              "src": "1271:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "exp",
+                            "nodeType": "YulIdentifier",
+                            "src": "1263:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1263:10:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "E",
+                            "nodeType": "YulTypedName",
+                            "src": "1258:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1294:18:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "Y",
+                              "nodeType": "YulIdentifier",
+                              "src": "1307:1:0"
+                            },
+                            {
+                              "name": "S",
+                              "nodeType": "YulIdentifier",
+                              "src": "1310:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "mod",
+                            "nodeType": "YulIdentifier",
+                            "src": "1303:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1303:9:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "V",
+                            "nodeType": "YulTypedName",
+                            "src": "1298:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1341:18:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "Y",
+                              "nodeType": "YulIdentifier",
+                              "src": "1354:1:0"
+                            },
+                            {
+                              "name": "E",
+                              "nodeType": "YulIdentifier",
+                              "src": "1357:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "mod",
+                            "nodeType": "YulIdentifier",
+                            "src": "1350:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1350:9:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "N",
+                            "nodeType": "YulTypedName",
+                            "src": "1345:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1384:18:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "V",
+                              "nodeType": "YulIdentifier",
+                              "src": "1397:1:0"
+                            },
+                            {
+                              "name": "N",
+                              "nodeType": "YulIdentifier",
+                              "src": "1400:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "sub",
+                            "nodeType": "YulIdentifier",
+                            "src": "1393:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1393:9:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "I",
+                            "nodeType": "YulTypedName",
+                            "src": "1388:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulAssignment",
+                        "src": "1446:14:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "I",
+                              "nodeType": "YulIdentifier",
+                              "src": "1455:1:0"
+                            },
+                            {
+                              "name": "E",
+                              "nodeType": "YulIdentifier",
+                              "src": "1458:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "div",
+                            "nodeType": "YulIdentifier",
+                            "src": "1451:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1451:9:0"
+                        },
+                        "variableNames": [
+                          {
+                            "name": "O",
+                            "nodeType": "YulIdentifier",
+                            "src": "1446:1:0"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "evmVersion": "istanbul",
+                  "externalReferences": [
+                    {
+                      "declaration": 18,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1446:1:0",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 5,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1033:1:0",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 13,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1223:1:0",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 13,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1271:1:0",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 15,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1226:1:0",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 9,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1116:2:0",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 7,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1077:1:0",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 11,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "994:1:0",
+                      "valueSize": 1
+                    }
+                  ],
+                  "id": 20,
+                  "nodeType": "InlineAssembly",
+                  "src": "954:516:0"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 3,
+              "nodeType": "StructuredDocumentation",
+              "src": "191:575:0",
+              "text": " @notice Generates a pseudo random number on chain with super low gas cost (850 gas)\n @dev Generates a pseudo random number on chain with super low gas cost (850 gas)\n @param b 1. numerator of the PRNG\n @param n 2. power of the 10 on the divisor of the PRNG\n @param mu 3. value for the oscilator to introduce entropy\n @param p 4. expands the number as 10^p\n @param i 5. chooses the starting position to start cutting the number\n @param j 6. to choose the length of the random number (digits from i position to left)"
+            },
+            "functionSelector": "6f7ce92e",
+            "id": 22,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "generator",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 16,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5,
+                  "mutability": "mutable",
+                  "name": "b",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 22,
+                  "src": "800:9:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "800:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7,
+                  "mutability": "mutable",
+                  "name": "n",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 22,
+                  "src": "819:9:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "819:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 9,
+                  "mutability": "mutable",
+                  "name": "mu",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 22,
+                  "src": "838:10:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 8,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "838:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11,
+                  "mutability": "mutable",
+                  "name": "p",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 22,
+                  "src": "858:9:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 10,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "858:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 13,
+                  "mutability": "mutable",
+                  "name": "i",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 22,
+                  "src": "877:9:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 12,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "877:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 15,
+                  "mutability": "mutable",
+                  "name": "j",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 22,
+                  "src": "896:9:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 14,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "896:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "790:121:0"
+            },
+            "returnParameters": {
+              "id": 19,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 18,
+                  "mutability": "mutable",
+                  "name": "O",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 22,
+                  "src": "933:9:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 17,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "933:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "932:11:0"
+            },
+            "scope": 23,
+            "src": "772:704:0",
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "public"
+          }
+        ],
+        "scope": 24,
+        "src": "165:1313:0"
+      }
+    ],
+    "src": "38:1441:0"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/matiasbn/Desktop/luckyseven-protocol-contracts/contracts/LuckySeven.sol",
+    "exportedSymbols": {
+      "LuckySeven": [
+        23
+      ]
+    },
+    "id": 24,
+    "license": "UNLICENSED",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1,
+        "literals": [
+          "solidity",
+          "^",
+          "0.6",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "38:23:0"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": {
+          "id": 2,
+          "nodeType": "StructuredDocumentation",
+          "src": "63:101:0",
+          "text": " @title LuckySeven\n @dev LuckySeven is a contract to generate random number with low cost"
+        },
+        "fullyImplemented": true,
+        "id": 23,
+        "linearizedBaseContracts": [
+          23
+        ],
+        "name": "LuckySeven",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 21,
+              "nodeType": "Block",
+              "src": "944:532:0",
+              "statements": [
+                {
+                  "AST": {
+                    "nodeType": "YulBlock",
+                    "src": "963:507:0",
+                    "statements": [
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "977:19:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "kind": "number",
+                              "nodeType": "YulLiteral",
+                              "src": "990:2:0",
+                              "type": "",
+                              "value": "10"
+                            },
+                            {
+                              "name": "p",
+                              "nodeType": "YulIdentifier",
+                              "src": "994:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "exp",
+                            "nodeType": "YulIdentifier",
+                            "src": "986:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "986:10:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "L",
+                            "nodeType": "YulTypedName",
+                            "src": "981:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1017:18:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "L",
+                              "nodeType": "YulIdentifier",
+                              "src": "1030:1:0"
+                            },
+                            {
+                              "name": "b",
+                              "nodeType": "YulIdentifier",
+                              "src": "1033:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "mul",
+                            "nodeType": "YulIdentifier",
+                            "src": "1026:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1026:9:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "U",
+                            "nodeType": "YulTypedName",
+                            "src": "1021:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1060:19:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "kind": "number",
+                              "nodeType": "YulLiteral",
+                              "src": "1073:2:0",
+                              "type": "",
+                              "value": "10"
+                            },
+                            {
+                              "name": "n",
+                              "nodeType": "YulIdentifier",
+                              "src": "1077:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "exp",
+                            "nodeType": "YulIdentifier",
+                            "src": "1069:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1069:10:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "C",
+                            "nodeType": "YulTypedName",
+                            "src": "1064:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1100:19:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "C",
+                              "nodeType": "YulIdentifier",
+                              "src": "1113:1:0"
+                            },
+                            {
+                              "name": "mu",
+                              "nodeType": "YulIdentifier",
+                              "src": "1116:2:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "sub",
+                            "nodeType": "YulIdentifier",
+                            "src": "1109:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1109:10:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "K",
+                            "nodeType": "YulTypedName",
+                            "src": "1104:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1145:18:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "U",
+                              "nodeType": "YulIdentifier",
+                              "src": "1158:1:0"
+                            },
+                            {
+                              "name": "K",
+                              "nodeType": "YulIdentifier",
+                              "src": "1161:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "div",
+                            "nodeType": "YulIdentifier",
+                            "src": "1154:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1154:9:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "Y",
+                            "nodeType": "YulTypedName",
+                            "src": "1149:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1202:27:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "kind": "number",
+                              "nodeType": "YulLiteral",
+                              "src": "1215:2:0",
+                              "type": "",
+                              "value": "10"
+                            },
+                            {
+                              "arguments": [
+                                {
+                                  "name": "i",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "1223:1:0"
+                                },
+                                {
+                                  "name": "j",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "1226:1:0"
+                                }
+                              ],
+                              "functionName": {
+                                "name": "add",
+                                "nodeType": "YulIdentifier",
+                                "src": "1219:3:0"
+                              },
+                              "nodeType": "YulFunctionCall",
+                              "src": "1219:9:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "exp",
+                            "nodeType": "YulIdentifier",
+                            "src": "1211:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1211:18:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "S",
+                            "nodeType": "YulTypedName",
+                            "src": "1206:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1254:19:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "kind": "number",
+                              "nodeType": "YulLiteral",
+                              "src": "1267:2:0",
+                              "type": "",
+                              "value": "10"
+                            },
+                            {
+                              "name": "i",
+                              "nodeType": "YulIdentifier",
+                              "src": "1271:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "exp",
+                            "nodeType": "YulIdentifier",
+                            "src": "1263:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1263:10:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "E",
+                            "nodeType": "YulTypedName",
+                            "src": "1258:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1294:18:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "Y",
+                              "nodeType": "YulIdentifier",
+                              "src": "1307:1:0"
+                            },
+                            {
+                              "name": "S",
+                              "nodeType": "YulIdentifier",
+                              "src": "1310:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "mod",
+                            "nodeType": "YulIdentifier",
+                            "src": "1303:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1303:9:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "V",
+                            "nodeType": "YulTypedName",
+                            "src": "1298:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1341:18:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "Y",
+                              "nodeType": "YulIdentifier",
+                              "src": "1354:1:0"
+                            },
+                            {
+                              "name": "E",
+                              "nodeType": "YulIdentifier",
+                              "src": "1357:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "mod",
+                            "nodeType": "YulIdentifier",
+                            "src": "1350:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1350:9:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "N",
+                            "nodeType": "YulTypedName",
+                            "src": "1345:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1384:18:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "V",
+                              "nodeType": "YulIdentifier",
+                              "src": "1397:1:0"
+                            },
+                            {
+                              "name": "N",
+                              "nodeType": "YulIdentifier",
+                              "src": "1400:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "sub",
+                            "nodeType": "YulIdentifier",
+                            "src": "1393:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1393:9:0"
+                        },
+                        "variables": [
+                          {
+                            "name": "I",
+                            "nodeType": "YulTypedName",
+                            "src": "1388:1:0",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulAssignment",
+                        "src": "1446:14:0",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "I",
+                              "nodeType": "YulIdentifier",
+                              "src": "1455:1:0"
+                            },
+                            {
+                              "name": "E",
+                              "nodeType": "YulIdentifier",
+                              "src": "1458:1:0"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "div",
+                            "nodeType": "YulIdentifier",
+                            "src": "1451:3:0"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1451:9:0"
+                        },
+                        "variableNames": [
+                          {
+                            "name": "O",
+                            "nodeType": "YulIdentifier",
+                            "src": "1446:1:0"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "evmVersion": "istanbul",
+                  "externalReferences": [
+                    {
+                      "declaration": 18,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1446:1:0",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 5,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1033:1:0",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 13,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1223:1:0",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 13,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1271:1:0",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 15,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1226:1:0",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 9,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1116:2:0",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 7,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1077:1:0",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 11,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "994:1:0",
+                      "valueSize": 1
+                    }
+                  ],
+                  "id": 20,
+                  "nodeType": "InlineAssembly",
+                  "src": "954:516:0"
+                }
+              ]
+            },
+            "documentation": {
+              "id": 3,
+              "nodeType": "StructuredDocumentation",
+              "src": "191:575:0",
+              "text": " @notice Generates a pseudo random number on chain with super low gas cost (850 gas)\n @dev Generates a pseudo random number on chain with super low gas cost (850 gas)\n @param b 1. numerator of the PRNG\n @param n 2. power of the 10 on the divisor of the PRNG\n @param mu 3. value for the oscilator to introduce entropy\n @param p 4. expands the number as 10^p\n @param i 5. chooses the starting position to start cutting the number\n @param j 6. to choose the length of the random number (digits from i position to left)"
+            },
+            "functionSelector": "6f7ce92e",
+            "id": 22,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "generator",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 16,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 5,
+                  "mutability": "mutable",
+                  "name": "b",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 22,
+                  "src": "800:9:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "800:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 7,
+                  "mutability": "mutable",
+                  "name": "n",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 22,
+                  "src": "819:9:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "819:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 9,
+                  "mutability": "mutable",
+                  "name": "mu",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 22,
+                  "src": "838:10:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 8,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "838:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11,
+                  "mutability": "mutable",
+                  "name": "p",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 22,
+                  "src": "858:9:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 10,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "858:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 13,
+                  "mutability": "mutable",
+                  "name": "i",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 22,
+                  "src": "877:9:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 12,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "877:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 15,
+                  "mutability": "mutable",
+                  "name": "j",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 22,
+                  "src": "896:9:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 14,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "896:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "790:121:0"
+            },
+            "returnParameters": {
+              "id": 19,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 18,
+                  "mutability": "mutable",
+                  "name": "O",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 22,
+                  "src": "933:9:0",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 17,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "933:7:0",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "932:11:0"
+            },
+            "scope": 23,
+            "src": "772:704:0",
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "public"
+          }
+        ],
+        "scope": 24,
+        "src": "165:1313:0"
+      }
+    ],
+    "src": "38:1441:0"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.12+commit.27d51765.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.2.5",
+  "updatedAt": "2021-01-29T23:36:16.408Z",
+  "devdoc": {
+    "details": "LuckySeven is a contract to generate random number with low cost",
+    "kind": "dev",
+    "methods": {
+      "generator(uint256,uint256,uint256,uint256,uint256,uint256)": {
+        "details": "Generates a pseudo random number on chain with super low gas cost (850 gas)",
+        "params": {
+          "b": "1. numerator of the PRNG",
+          "i": "5. chooses the starting position to start cutting the number",
+          "j": "6. to choose the length of the random number (digits from i position to left)",
+          "mu": "3. value for the oscilator to introduce entropy",
+          "n": "2. power of the 10 on the divisor of the PRNG",
+          "p": "4. expands the number as 10^p"
+        }
+      }
+    },
+    "title": "LuckySeven",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "generator(uint256,uint256,uint256,uint256,uint256,uint256)": {
+        "notice": "Generates a pseudo random number on chain with super low gas cost (850 gas)"
+      }
+    },
+    "version": 1
+  }
+}
