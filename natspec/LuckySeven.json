@@ -1,16 +1,51 @@
 {
   "details": "LuckySeven is a contract to generate random number with low cost",
+  "events": {
+    "IParameterReceived(uint256,uint256,address)": {
+      "details": "event triggered when a I parameter is received from Chainlink for the PRNG",
+      "params": {
+        "i": "1.value received from Chainlink",
+        "luckySevenNumber": "2. LuckySevenNumber, calculated using i and the PRNG",
+        "owner": "3. owner of the LuckySevenNumber"
+      }
+    }
+  },
   "kind": "dev",
   "methods": {
-    "generator(uint256,uint256,uint256,uint256,uint256,uint256)": {
+    "constructor": {
+      "details": "parameterize the variables according to network",
+      "params": {
+        "_chainlinkJobId": "the job id for the HTTPGet job",
+        "_chainlinkOracle": "the address of the oracle to create requests to",
+        "_chainlinkToken": "the address of LINK token contract"
+      }
+    },
+    "fulFillInsecureIParameter(bytes32,bytes32)": {
+      "details": "callback function for the Chainlink SLI request which stores the SLI in the SLA contract",
+      "params": {
+        "_chainlinkResponse": "response uint256 from Chainlink Node",
+        "_requestId": "the ID of the ChainLink request"
+      }
+    },
+    "prng(uint256,uint256,uint256,uint256,uint256,uint256)": {
       "details": "Generates a pseudo random number on chain with super low gas cost (850 gas)",
       "params": {
         "b": "1. numerator of the PRNG",
         "n": "2. power of the 10 on the divisor of the PRNG",
-        "mu": "3. value for the oscilator to introduce entropy",
+        "mu": "3. value for the oscillator to introduce entropy",
         "p": "4. expands the number as 10^p",
         "i": "5. chooses the starting position to start cutting the number",
         "j": "6. to choose the length of the random number (digits from i position to left)"
+      }
+    },
+    "requestInsecureIParameter(uint256,uint256,uint256,uint256,uint256)": {
+      "details": "Request a random number without using testimonies",
+      "params": {
+        "_b": "1. b parameter",
+        "_n": "2. n parameter",
+        "_mu": "3. mu parameter for the generator",
+        "_p": "4. power of the 10 on the base",
+        "_j": "5. length of the number"
       }
     }
   },

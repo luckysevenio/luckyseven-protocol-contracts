@@ -1,4 +1,6 @@
 const LuckySeven = artifacts.require('LuckySeven');
+const LuckySevenPRNG = artifacts.require('LuckySevenPRNG');
+
 const fs = require('fs');
 const path = require('path');
 
@@ -7,6 +9,11 @@ const files = {
     constName: 'export const LuckySevenABI: AbiItem[] =',
     tsFileName: 'LuckySevenABI.ts',
     abi: LuckySeven.abi,
+  },
+  LuckySevenPRNG: {
+    constName: 'export const LuckySevenPRNGABI: AbiItem[] =',
+    tsFileName: 'LuckySevenPRNGABI.ts',
+    abi: LuckySevenPRNG.abi,
   },
 };
 

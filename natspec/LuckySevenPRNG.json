@@ -1,0 +1,19 @@
+{
+  "details": "LuckySeven is a contract to generate random number with low cost",
+  "kind": "dev",
+  "methods": {
+    "prng(uint256,uint256,uint256,uint256,uint256,uint256)": {
+      "details": "Generates a pseudo random number on chain with super low gas cost (850 gas)",
+      "params": {
+        "b": "1. numerator of the PRNG",
+        "n": "2. power of the 10 on the divisor of the PRNG",
+        "mu": "3. value for the oscillator to introduce entropy",
+        "p": "4. expands the number as 10^p",
+        "i": "5. chooses the starting position to start cutting the number",
+        "j": "6. to choose the length of the random number (digits from i position to left)"
+      }
+    }
+  },
+  "title": "LuckySeven",
+  "version": 1
+}

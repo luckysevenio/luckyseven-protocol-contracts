@@ -1,9 +1,7 @@
 {
   "kind": "user",
   "methods": {
-    "generator(uint256,uint256,uint256,uint256,uint256,uint256)": {
-      "notice": "Generates a pseudo random number on chain with super low gas cost (850 gas)"
-    }
+    "constructor": "sets the Chainlink parameters (oracle address, token address, jobId) and sets the SLARegistry to 0x0 address"
   },
   "version": 1
 }

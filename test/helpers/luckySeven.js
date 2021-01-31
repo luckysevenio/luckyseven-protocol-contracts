@@ -18,6 +18,6 @@ const luckySeven = (parameters) => {
   const numerator2 = P.modulo(tenPowerI);
   const numeratorTotal = numerator1.minus(numerator2);
   const R = numeratorTotal.dividedBy(tenPowerI);
-  return R;
+  return R.toString();
 };
 export default luckySeven;
