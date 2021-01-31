@@ -1,5 +1,7 @@
-require('babel-polyfill');
+// eslint-disable-next-line import/no-extraneous-dependencies
 require('babel-register');
+// eslint-disable-next-line import/no-extraneous-dependencies
+require('babel-polyfill');
 
 require('dotenv').config();
 const HDWalletProvider = require('truffle-hdwallet-provider');
