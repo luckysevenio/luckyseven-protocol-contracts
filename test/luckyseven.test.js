@@ -7,14 +7,6 @@ import { eventListener } from './helpers';
 const LinkToken = artifacts.require('@openzeppelin/contracts/token/ERC20/IERC20');
 
 const LuckySeven = artifacts.require('LuckySeven');
-const params = {
-  b: 1,
-  n: 2,
-  mu: 3,
-  p: 20,
-  i: 7,
-  j: 12,
-};
 
 describe('LuckySeven', () => {
   let owner;
@@ -31,23 +23,29 @@ describe('LuckySeven', () => {
     );
     chainlinkToken = await LinkToken.at(envParameters.chainlinkTokenAddress);
   });
-
-  it('it should ask for a random number insecurely and calculate the value correctly', async () => {
+  describe('Insecure requests', () => {
+    it('single source without testimonies', async () => {
     // Add link tokens to LuckySeven contract to call Chainlink
-    await chainlinkToken.transfer(luckysevenContract.address, web3.utils.toWei('0.1'));
-
-    luckysevenContract.requestInsecureIParameter(
-      params.b,
-      params.n,
-      params.mu,
-      params.p,
-      params.j,
-    );
-    const {
-      values,
-    } = await eventListener(luckysevenContract, 'IParameterReceived');
-    expect(values.luckySevenNumber).to.equal(luckySeven({ ...params, i: values.i }));
-    expect(values.owner).to.equal(owner);
-    expect(Number(values.i)).to.be.a('number');
+      await chainlinkToken.transfer(luckysevenContract.address, web3.utils.toWei('0.1'));
+      const params = {
+        b: 0,
+        n: 20,
+        mu: 0,
+        p: 50,
+        i: 7,
+        j: 0,
+      };
+      luckysevenContract.singleSourceWithoutTestimonies(Object.values(params));
+      const {
+        values,
+      } = await eventListener(luckysevenContract, 'SingleSourceWithoutTestimoniesReceived');
+      const { chainlinkParameters } = values;
+      const [b, mu, j] = chainlinkParameters.split(',');
+      expect(values.luckySevenNumber).to.equal(luckySeven({
+        ...params, b, mu, j,
+      }));
+      expect(values.owner).to.equal(owner);
+      expect(Number(values.i)).to.be.a('number');
+    });
   });
 });
