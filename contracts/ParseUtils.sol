@@ -2,32 +2,43 @@
 pragma solidity ^0.6.0;
 
 contract ParseUtils {
-    function _parseSLIData(string memory sliData)
-        internal
-        pure
-        returns (uint256, uint256)
-    {
-        bytes memory bytesSLIData = bytes(sliData);
-        uint256 sliDataLength = bytesSLIData.length;
-        bytes memory bytesHits = new bytes(sliDataLength);
-        bytes memory bytesMisses = new bytes(sliDataLength);
-        for (uint256 index; index < sliDataLength; index++) {
-            if (bytesSLIData[index] == bytes1(",")) {
-                for (uint256 index2 = 0; index2 < index; index2++) {
-                    bytesHits[index2] = bytesSLIData[index2];
-                }
-                for (
-                    uint256 index3 = 0;
-                    index3 < sliDataLength - index - 1;
-                    index3++
-                ) {
-                    bytesMisses[index3] = bytesSLIData[index + 1 + index3];
-                }
+    // @dev returns a comma separated value
+    function _parseCSV(
+        string memory _commaSeparatedValue,
+        uint256 _requestedParameters
+    ) internal pure returns (uint256[] memory) {
+        bytes memory bytesCSV = bytes(_commaSeparatedValue);
+        uint256[] memory parameters = new uint256[](_requestedParameters);
+        bytes memory parameter = '';
+        uint256 parameterCounter = 0;
+        for (uint256 index; index < bytesCSV.length; index++) {
+            if (bytesCSV[index] == bytes1(',')) {
+                parameters[parameterCounter] = _bytesToUint(parameter);
+                parameter = '';
+                parameterCounter += 1;
+            } else {
+                parameter = abi.encodePacked(parameter, bytesCSV[index]);
             }
         }
-        uint256 hits = _bytesToUint(bytesHits);
-        uint256 misses = _bytesToUint(bytesMisses);
-        return (hits, misses);
+        parameters[parameterCounter] = _bytesToUint(parameter);
+        return parameters;
+    }
+
+    function _fillParameters(
+        uint256[] memory _userParameters,
+        uint256[] memory _chainlinkParameters
+    ) internal pure returns (uint256[] memory) {
+        uint256[] memory parameters = new uint256[](_userParameters.length);
+        uint256 parameterCounter = 0;
+        for (uint256 index = 0; index < _userParameters.length; index++) {
+            if (_userParameters[index] == 0) {
+                parameters[index] = _chainlinkParameters[parameterCounter];
+                parameterCounter += 1;
+            } else {
+                parameters[index] = _userParameters[index];
+            }
+        }
+        return parameters;
     }
 
     function _addressToString(address _address)
@@ -36,10 +47,10 @@ contract ParseUtils {
         returns (string memory)
     {
         bytes32 _bytes = bytes32(uint256(_address));
-        bytes memory HEX = "0123456789abcdef";
+        bytes memory HEX = '0123456789abcdef';
         bytes memory _string = new bytes(42);
-        _string[0] = "0";
-        _string[1] = "x";
+        _string[0] = '0';
+        _string[1] = 'x';
         for (uint256 i = 0; i < 20; i++) {
             _string[2 + i * 2] = HEX[uint8(_bytes[i + 12] >> 4)];
             _string[3 + i * 2] = HEX[uint8(_bytes[i + 12] & 0x0f)];
@@ -115,7 +126,7 @@ contract ParseUtils {
     {
         uint256 number = _i;
         if (number == 0) {
-            return "0";
+            return '0';
         }
         uint256 j = number;
         uint256 len;

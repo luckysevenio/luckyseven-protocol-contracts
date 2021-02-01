@@ -1,15 +1,17 @@
 //SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.6.0;
 
-import "@chainlink/contracts/v0.6/ChainlinkClient.sol";
-import "./LuckySevenPRNG.sol";
-import "./ParseUtils.sol";
+import '@chainlink/contracts/v0.6/ChainlinkClient.sol';
+import './LuckySevenPRNG.sol';
+import './ParseUtils.sol';
 
 /**
  * @title LuckySeven
  * @dev LuckySeven is a contract to generate random number with low cost
  */
 contract LuckySeven is ChainlinkClient, LuckySevenPRNG, ParseUtils {
+    enum JobCodes {singleSourceWithoutTestimonies}
+
     struct LuckySevenNumber {
         uint256 b;
         uint256 n;
@@ -18,12 +20,19 @@ contract LuckySeven is ChainlinkClient, LuckySevenPRNG, ParseUtils {
         uint256 i;
         uint256 j;
         uint256 number;
-        bool fulfilled;
+        address owner;
+    }
+
+    struct JobRequestWithoutTestimonies {
+        string jobType;
+        uint256[] userParams;
+        uint256 requestedParameters;
         address owner;
     }
 
     bytes32[] public requests;
-    mapping(bytes32 => LuckySevenNumber) public requestToLuckySevenNumber;
+    mapping(bytes32 => JobRequestWithoutTestimonies)
+        public requestToJobRequestWithoutTestimonies;
     mapping(address => LuckySevenNumber[]) public luckySevenNumbersRegister;
 
     // @dev Chainlink oracle address
@@ -32,18 +41,6 @@ contract LuckySeven is ChainlinkClient, LuckySevenPRNG, ParseUtils {
     bytes32 public chainlinkJobId;
     // @dev fee for Chainlink querys. Currently 0.1 LINK
     uint256 public fee = 0.1 * 10**18;
-
-    /**
-     * @dev event triggered when a I parameter is received from Chainlink for the PRNG
-     * @param i 1.value received from Chainlink
-     * @param luckySevenNumber 2. LuckySevenNumber, calculated using i and the PRNG
-     * @param owner 3. owner of the LuckySevenNumber
-     */
-    event IParameterReceived(
-        uint256 i,
-        uint256 luckySevenNumber,
-        address indexed owner
-    );
 
     /**
      * @dev parameterize the variables according to network
@@ -64,42 +61,52 @@ contract LuckySeven is ChainlinkClient, LuckySevenPRNG, ParseUtils {
 
     /**
      * @dev Request a random number without using testimonies
-     * @param _b 1. b parameter
-     * @param _n 2. n parameter
-     * @param _mu 3. mu parameter for the generator
-     * @param _p 4. power of the 10 on the base
-     * @param _j 5. length of the number
+     * @param _userParameters 1. array of parameters sent by the user. 0s are considered requests
      */
 
-    function requestInsecureIParameter(
-        uint256 _b,
-        uint256 _n,
-        uint256 _mu,
-        uint256 _p,
-        uint256 _j
-    ) public {
+    function singleSourceWithoutTestimonies(uint256[] memory _userParameters)
+        public
+    {
         Chainlink.Request memory request =
             buildChainlinkRequest(
                 chainlinkJobId,
                 address(this),
-                this.fulFillInsecureIParameter.selector
+                this.fulFillSingleSourceWithoutTestimonies.selector
             );
-        request.add("job_type", "request_insecure_parameter");
+        string memory query = '';
+        uint256 requestedParameters = 0;
+        for (uint256 index = 0; index < _userParameters.length; index++) {
+            if (_userParameters[index] == 0) {
+                query = string(abi.encodePacked(query, _uintToStr(index)));
+                requestedParameters += 1;
+            }
+        }
+        request.add('job_type', 'single_source_without_testimonies');
+        request.add('job_data', query);
         bytes32 requestId =
             sendChainlinkRequestTo(chainlinkOracle, request, fee);
         requests.push(requestId);
-        requestToLuckySevenNumber[requestId] = LuckySevenNumber(
-            _b,
-            _n,
-            _mu,
-            _p,
-            0,
-            _j,
-            0,
-            false,
-            msg.sender
-        );
+        requestToJobRequestWithoutTestimonies[
+            requestId
+        ] = JobRequestWithoutTestimonies({
+            jobType: 'single_source_without_testimonies',
+            userParams: _userParameters,
+            requestedParameters: requestedParameters,
+            owner: msg.sender
+        });
     }
+
+    /**
+     * @dev event triggered when a I parameter is received from Chainlink for the PRNG
+     * @param chainlinkParameters 1. comma separated value returned by Chainlink
+     * @param luckySevenNumber 2. LuckySevenNumber, calculated using the Chainlink parameteres and the PRNG
+     * @param owner 3. owner of the LuckySevenNumber
+     */
+    event SingleSourceWithoutTestimoniesReceived(
+        string chainlinkParameters,
+        uint256 luckySevenNumber,
+        address indexed owner
+    );
 
     /**
      * @dev callback function for the Chainlink SLI request which stores
@@ -107,26 +114,44 @@ contract LuckySeven is ChainlinkClient, LuckySevenPRNG, ParseUtils {
      * @param _requestId the ID of the ChainLink request
      * @param _chainlinkResponse response uint256 from Chainlink Node
      */
-    function fulFillInsecureIParameter(
+    function fulFillSingleSourceWithoutTestimonies(
         bytes32 _requestId,
         bytes32 _chainlinkResponse
     ) public recordChainlinkFulfillment(_requestId) {
-        uint256 i = _bytes32ToUint(_chainlinkResponse);
-        LuckySevenNumber memory luckySevenNumber =
-            requestToLuckySevenNumber[_requestId];
+        JobRequestWithoutTestimonies memory jobRequest =
+            requestToJobRequestWithoutTestimonies[_requestId];
+        uint256[] memory chainlinkParameters =
+            _parseCSV(
+                _bytes32ToStr(_chainlinkResponse),
+                jobRequest.requestedParameters
+            );
+        uint256[] memory parameters =
+            _fillParameters(jobRequest.userParams, chainlinkParameters);
         uint256 number =
             prng(
-                luckySevenNumber.b,
-                luckySevenNumber.n,
-                luckySevenNumber.mu,
-                luckySevenNumber.p,
-                i,
-                luckySevenNumber.j
+                parameters[0],
+                parameters[1],
+                parameters[2],
+                parameters[3],
+                parameters[4],
+                parameters[5]
             );
-        emit IParameterReceived(i, number, luckySevenNumber.owner);
-        luckySevenNumber.number = number;
-        luckySevenNumber.i = i;
-        luckySevenNumber.fulfilled = true;
+        emit SingleSourceWithoutTestimoniesReceived(
+            _bytes32ToStr(_chainlinkResponse),
+            number,
+            jobRequest.owner
+        );
+        LuckySevenNumber memory luckySevenNumber =
+            LuckySevenNumber({
+                number: number,
+                b: parameters[0],
+                n: parameters[1],
+                mu: parameters[2],
+                p: parameters[3],
+                i: parameters[4],
+                j: parameters[5],
+                owner: jobRequest.owner
+            });
         luckySevenNumbersRegister[luckySevenNumber.owner].push(
             luckySevenNumber
         );
